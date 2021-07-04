@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Eterna Game</title>
+		<link rel="stylesheet" href="./style/svg-style.css">    
+		<!-- <link rel="stylesheet" href="./style/style.css"> -->
+		<!-- <link rel="icon" href="/img/oe_icon.png"/> -->
+		<link rel="icon" href="./img/oe_icon.png">
+	</head>
+	<body>
+		<div id="mainContainer">
+			<div id="configModal" class="modal">
+
+			  <!-- Modal content -->
+			  <div class="modal-content">
+				<span class="closeModal" id="closeConfigModal" onclick="hideConfigModal()">&times;</span>
+				<p>Edit Game Coniguration</p>
+				<div> 
+					<div>Army Units Properties</div>
+					<table>
+					  <thead>
+						  <tr>
+							<th>⚔</th><th>🦿</th><th>💥</th><th>❤️</th>
+						  </tr>					  
+					  </thead>
+					  <tbody id="armyConfigTable">
+					  <!-- contents added/removed dynamically -->
+					  </tbody>
+					</table>					
+					<div style="padding-top: 15px; border: 1px solid black">
+						<div>Army Units Damage-Health Dependency
+							<!-- Rounded switch -->
+							<label class="switch">
+							  <input id="damageHealthToggle" type="checkbox">
+							  <span class="slider round"></span>
+							</label>												
+						</div>
+					</div>
+				</div>
+<!-- 				<div>Initial Amries Distribution</div>
+				<div>Pool to distribute</div>	
+				<table>
+				  <thead>
+					  <tr>
+						<th><img src="./img/units/artillery.svg" height="10%"></th>
+						<th id="artDistrValue">0</th>
+						<th><img src="./img/units/cavalry.svg"   height="10%"></th>
+						<th id="cavDistrValue">0</th>
+						<th><img src="./img/units/infantry.svg"  height="10%"></th>
+						<th id="infDistrValue">0</th>
+					  </tr>					  
+				  </thead>
+				</table>				
+				<div>Distribution Table</div>
+				<div style="overflow:auto;">
+					<table>
+					  <thead>
+						  <tr>
+							<th>County</th>
+							<th><img src="./img/units/artillery.svg" height="10%"></th>
+							<th><img src="./img/units/cavalry.svg"   height="10%"></th>
+							<th><img src="./img/units/infantry.svg"  height="10%"></th>
+						  </tr>					  
+					  </thead>
+					  <tbody id="initialArmyTable" >
+					  <!-- contents added/removed dynamically 
+					  </tbody>
+					</table>								
+				</div> 
+-->
+				<div id="modal-buttons">
+					<button type="button" onclick="updateConfig()">OK</button>
+					<button type="button" onclick="hideConfigModal()">Cancel</button>
+					<button type="button" onclick="runTests()">Run Tests</button>
+				</div>
+			  </div>
+			</div>			
+			<div id="backupModal" class="modal">
+
+			  <!-- Modal content -->
+			  <div class="modal-content">
+				<span class="closeModal" id="closeBackupModal">&times;</span>
+				<p>Choose Backup</p>
+				<div id="backupContainer">
+					<!-- contents added/removed dynamically -->
+				</div>
+				<div id="backup-modal-buttons">
+					<button type="button" onclick="loadSelectedBackup()">Load Selected</button>
+					<button type="button" onclick="hideBackupModal()">Cancel</button>					
+				</div>
+			  </div>
+			</div>						
+			
+			<div id="mainField">
+			  <svg version="1.1" 
+				   xmlns="http://www.w3.org/2000/svg" 
+				   xmlns:xlink="http://www.w3.org/1999/xlink" 
+				   width="100%" height="100%"
+				   viewBox="0 0 1364 960" 
+				   preserveAspectRatio="none"
+				   id="svg" >
+				<image   id="mainMap" xlink:href="./img/map_cut_to_clean.jpg"></image>
+				
+				<polygon id="V1-county" class="V1 county" points="189.93,437.68 156.31,437.68 129.73,416.80 107.46,419.07 91.10,342.57 133.59,321.45 160.85,340.07 185.84,346.65 182.89,374.80 204.47,389.33 "
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V1-artillery" class="V1 armyUnit" xlink:href="./img/units/artillery.svg" x="110" y="340" height="3%" width="3%"></image>
+				<image   id="V1-cavalry"   class="V1 armyUnit" xlink:href="./img/units/cavalry.svg"   x="130" y="360" height="3%" width="3%"></image>
+				<image   id="V1-infantry"  class="V1 armyUnit" xlink:href="./img/units/infantry.svg"  x="150" y="390" height="3%" width="3%"></image>
+				
+				<polygon id="V2-county" class="V2 county" points="119.50,260.16 139.04,248.35 173.80,245.40 172.67,233.37 189.71,223.16 219.02,227.24 251.05,257.21 319.66,333.71 285.81,394.10 209.93,343.70 185.84,346.65 160.85,340.07 133.59,321.45 " 
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V2-artillery" class="V2 armyUnit" xlink:href="./img/units/artillery.svg" x="150" y="260" height="3%" width="3%"></image>
+				<image   id="V2-cavalry"   class="V2 armyUnit" xlink:href="./img/units/cavalry.svg"   x="190" y="260" height="3%" width="3%"></image>
+				<image   id="V2-infantry"  class="V2 armyUnit" xlink:href="./img/units/infantry.svg"  x="170" y="290" height="3%" width="3%"></image>
+				
+				<polygon id="V3-county" class="V3 county" points="185.84,346.65 209.93,343.70 285.81,394.10 279.90,411.12 291.49,441.32 327.61,476.73 301.49,515.10 251.96,551.87 210.15,526.90 223.33,466.74 189.93,437.68 204.47,389.33 182.89,374.80 " 
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V3-artillery" class="V3 armyUnit" xlink:href="./img/units/artillery.svg" x="220" y="400" height="3%" width="3%"></image>
+				<image   id="V3-cavalry"   class="V3 armyUnit" xlink:href="./img/units/cavalry.svg"   x="240" y="430" height="3%" width="3%"></image>
+				<image   id="V3-infantry"  class="V3 armyUnit" xlink:href="./img/units/infantry.svg"  x="240" y="470" height="3%" width="3%"></image>	
+				
+				<polygon id="V4-county" class="V4 county" points="141.09,547.33 189.03,522.13 210.15,526.90 251.96,551.87 301.49,515.10 312.85,565.27 329.20,580.25 276.50,625.43 240.60,622.47 218.56,628.60 185.16,606.58 165.85,605.22 164.26,580.25 " 
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V4-artillery" class="V4 armyUnit" xlink:href="./img/units/artillery.svg" x="180" y="550" height="3%" width="3%"></image>
+				<image   id="V4-cavalry"   class="V4 armyUnit" xlink:href="./img/units/cavalry.svg"   x="210" y="580" height="3%" width="3%"></image>
+				<image   id="V4-infantry"  class="V4 armyUnit" xlink:href="./img/units/infantry.svg"  x="250" y="580" height="3%" width="3%"></image>	
+				
+				<polygon id="V5-county" class="V5 county" points="84.52,567.54 141.09,547.33 164.26,580.25 165.85,605.22 185.16,606.58 218.56,628.60 221.97,656.07 193.57,679.23 185.84,724.86 111.10,718.73 105.87,698.52 91.10,698.75 81.34,674.01 79.52,640.41 94.74,612.26 84.52,567.54 " 
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V5-artillery" class="V5 armyUnit" xlink:href="./img/units/artillery.svg" x="110" y="620" height="3%" width="3%"></image>
+				<image   id="V5-cavalry"   class="V5 armyUnit" xlink:href="./img/units/cavalry.svg"   x="150" y="620" height="3%" width="3%"></image>
+				<image   id="V5-infantry"  class="V5 armyUnit" xlink:href="./img/units/infantry.svg"  x="130" y="650" height="3%" width="3%"></image>
+
+				<polygon id="V6-county" class="V6 county" points="218.56,628.60 240.60,622.47 276.50,625.43 329.20,580.25 338.29,596.60 386.46,636.32 341.93,679.00 315.57,704.65 263.55,724.40 230.60,716.69 185.84,724.86 " 
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V6-artillery" class="V6 armyUnit" xlink:href="./img/units/artillery.svg" x="210" y="680" height="3%" width="3%"></image>
+				<image   id="V6-cavalry"   class="V6 armyUnit" xlink:href="./img/units/cavalry.svg"   x="230" y="640" height="3%" width="3%"></image>
+				<image   id="V6-infantry"  class="V6 armyUnit" xlink:href="./img/units/infantry.svg"  x="270" y="630" height="3%" width="3%"></image>
+				
+				<polygon id="V7-county" class="V7 county" points="327.61,476.73 367.15,473.33 405.31,489.67 430.07,435.87 469.61,420.89 451.21,472.42 432.58,486.95 427.13,559.14 401.23,613.62 386.46,636.32 338.29,596.60 329.20,580.25 312.85,565.27 301.49,515.10 " 
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V7-artillery" class="V7 armyUnit" xlink:href="./img/units/artillery.svg" x="330" y="540" height="3%" width="3%"></image>
+				<image   id="V7-cavalry"   class="V7 armyUnit" xlink:href="./img/units/cavalry.svg"   x="370" y="520" height="3%" width="3%"></image>
+				<image   id="V7-infantry"  class="V7 armyUnit" xlink:href="./img/units/infantry.svg"  x="360" y="560" height="3%" width="3%"></image>
+
+				<polygon id="V8-county" class="V8 county" points="319.66,333.71 378.96,362.09 472.56,323.04 469.61,420.89 430.07,435.87 405.31,489.67 367.15,473.33 327.61,476.73 291.49,441.32 279.90,411.12 285.81,394.10 " 
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V8-artillery" class="V8 armyUnit" xlink:href="./img/units/artillery.svg" x="310" y="380" height="3%" width="3%"></image>
+				<image   id="V8-cavalry"   class="V8 armyUnit" xlink:href="./img/units/cavalry.svg"   x="355" y="370" height="3%" width="3%"></image>
+				<image   id="V8-infantry"  class="V8 armyUnit" xlink:href="./img/units/infantry.svg"  x="390" y="370" height="3%" width="3%"></image>
+				
+				<polygon id="V9-county" class="V9 county" points="251.05,257.21 287.17,256.53 323.30,275.37 350.33,288.76 373.73,276.05 387.14,297.16 413.04,280.36 456.89,255.39 476.20,271.51 488.69,295.80 472.56,323.04 378.96,362.09 319.66,333.71 " 
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V9-artillery" class="V9 armyUnit" xlink:href="./img/units/artillery.svg" x="320" y="300" height="3%" width="3%"></image>
+				<image   id="V9-cavalry"   class="V9 armyUnit" xlink:href="./img/units/cavalry.svg"   x="350" y="310" height="3%" width="3%"></image>
+				<image   id="V9-infantry"  class="V9 armyUnit" xlink:href="./img/units/infantry.svg"  x="380" y="305" height="3%" width="3%"></image>
+
+				 <polygon id="V10-county" class="V10 county" points="455.75,217.25 479.83,197.50 560.26,212.94 574.35,237.46 601.61,242.45 584.57,296.03 565.03,298.52 524.14,289.22 488.69,295.80 476.20,271.51 456.89,255.39 "  
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V10-artillery" class="V10 armyUnit" xlink:href="./img/units/artillery.svg" x="480" y="240" height="3%" width="3%"></image>
+				<image   id="V10-cavalry"   class="V10 armyUnit" xlink:href="./img/units/cavalry.svg"   x="510" y="250" height="3%" width="3%"></image>
+				<image   id="V10-infantry"  class="V10 armyUnit" xlink:href="./img/units/infantry.svg"  x="540" y="245" height="3%" width="3%"></image>
+				
+
+				
+				<polygon id="V11-county" class="V11 county" points="488.69,295.80 524.14,289.22 565.03,298.52 584.57,296.03 613.88,354.60 577.53,358.00 570.71,385.93 546.18,394.10 545.49,416.35 495.06,428.83 469.61,420.89 472.56,323.04 " 
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V11-artillery" class="V11 armyUnit" xlink:href="./img/units/artillery.svg" x="500" y="320" height="3%" width="3%"></image>
+				<image   id="V11-cavalry"   class="V11 armyUnit" xlink:href="./img/units/cavalry.svg"   x="530" y="320" height="3%" width="3%"></image>
+				<image   id="V11-infantry"  class="V11 armyUnit" xlink:href="./img/units/infantry.svg"  x="515" y="345" height="3%" width="3%"></image>
+
+
+				
+				<polygon id="V12-county" class="V12 county" points="601.61,242.45 647.50,215.66 662.73,227.01 681.36,269.92 684.08,291.71 653.64,315.32 613.88,354.60 584.57,296.03 " 
+						 fill-opacity="10%"
+						 style="stroke:purple;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="V12-artillery" class="V12 armyUnit" xlink:href="./img/units/artillery.svg" x="600" y="260" height="3%" width="3%"></image>
+				<image   id="V12-cavalry"   class="V12 armyUnit" xlink:href="./img/units/cavalry.svg"   x="630" y="270" height="3%" width="3%"></image>
+				<image   id="V12-infantry"  class="V12 armyUnit" xlink:href="./img/units/infantry.svg"  x="605" y="290" height="3%" width="3%"></image>
+
+				
+				
+				<polygon id="G1-county" class="G1 county" points="432.58,486.95 451.21,472.42 474.84,479.68 493.47,507.61 524.36,538.71 500.51,543.70 481.88,563.45 441.67,588.42 423.26,616.12 401.23,613.62 427.13,559.14 " 
+						 fill-opacity="10%"
+						 style="stroke:green;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="G1-artillery" class="G1 armyUnit" xlink:href="./img/units/artillery.svg" x="430" y="490" height="3%" width="3%"></image>
+				<image   id="G1-cavalry"   class="G1 armyUnit" xlink:href="./img/units/cavalry.svg"   x="430" y="530" height="3%" width="3%"></image>
+				<image   id="G1-infantry"  class="G1 armyUnit" xlink:href="./img/units/infantry.svg"  x="450" y="510" height="3%" width="3%"></image>
+
+
+				
+				<polygon id="G2-county" class="G2 county" points="401.23,613.62 423.26,616.12 441.67,588.42 481.88,563.45 492.10,582.75 483.47,596.37 493.69,653.80 446.44,658.57 415.99,651.99 401.23,678.09 341.93,679.00 386.46,636.32 " 
+						 fill-opacity="10%"
+						 style="stroke:green;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="G2-artillery" class="G2 armyUnit" xlink:href="./img/units/artillery.svg" x="440" y="585" height="3%" width="3%"></image>
+				<image   id="G2-cavalry"   class="G2 armyUnit" xlink:href="./img/units/cavalry.svg"   x="420" y="615" height="3%" width="3%"></image>
+				<image   id="G2-infantry"  class="G2 armyUnit" xlink:href="./img/units/infantry.svg"  x="450" y="610" height="3%" width="3%"></image>
+				
+				
+				
+				<polygon id="G3-county" class="G3 county" points="481.88,563.45 500.51,543.70 524.36,538.71 559.58,534.62 570.03,584.11 596.61,610.90 574.57,619.98 541.18,611.81 510.28,620.20 493.69,653.80 483.47,596.37 492.10,582.75 " 
+						 fill-opacity="10%"
+						 style="stroke:green;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="G3-artillery" class="G3 armyUnit" xlink:href="./img/units/artillery.svg" x="490" y="550" height="3%" width="3%"></image>
+				<image   id="G3-cavalry"   class="G3 armyUnit" xlink:href="./img/units/cavalry.svg"   x="520" y="550" height="3%" width="3%"></image>
+				<image   id="G3-infantry"  class="G3 armyUnit" xlink:href="./img/units/infantry.svg"  x="500" y="575" height="3%" width="3%"></image>
+				
+
+				<polygon id="G4-county" class="G4 county" points="469.61,420.89 495.06,428.83 545.49,416.35 587.75,446.54 623.19,459.71 627.06,485.13 590.71,495.35 559.58,534.62 524.36,538.71 493.47,507.61 474.84,479.68 451.21,472.42 " 
+						 fill-opacity="10%"
+						 style="stroke:green;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="G4-artillery" class="G4 armyUnit" xlink:href="./img/units/artillery.svg" x="500" y="450" height="3%" width="3%"></image>
+				<image   id="G4-cavalry"   class="G4 armyUnit" xlink:href="./img/units/cavalry.svg"   x="530" y="450" height="3%" width="3%"></image>
+				<image   id="G4-infantry"  class="G4 armyUnit" xlink:href="./img/units/infantry.svg"  x="515" y="475" height="3%" width="3%"></image>
+				
+				
+				
+				<polygon id="G5-county" class="G5 county" points="546.18,394.10 570.71,385.93 577.53,358.00 613.88,354.60 653.64,315.32 684.08,291.71 708.39,293.76 707.48,312.60 730.88,324.40 729.29,343.70 707.48,364.59 715.89,384.34 703.17,400.00 677.49,393.19 655.91,407.95 649.55,429.29 623.19,459.71 587.75,446.54 545.49,416.35 " 
+						 fill-opacity="10%"
+						 style="stroke:green;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="G5-artillery" class="G5 armyUnit" xlink:href="./img/units/artillery.svg" x="580" y="375" height="3%" width="3%"></image>
+				<image   id="G5-cavalry"   class="G5 armyUnit" xlink:href="./img/units/cavalry.svg"   x="610" y="375" height="3%" width="3%"></image>
+				<image   id="G5-infantry"  class="G5 armyUnit" xlink:href="./img/units/infantry.svg"  x="595" y="405" height="3%" width="3%"></image>
+				
+				
+				
+				<polygon id="G6-county" class="G6 county" points="623.19,459.71 649.55,429.29 655.91,407.95 677.49,393.19 703.17,400.00 715.89,384.34 751.33,399.09 739.74,438.59 724.75,464.47 627.06,485.13 " 
+						 fill-opacity="10%"
+						 style="stroke:green;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="G6-artillery" class="G6 armyUnit" xlink:href="./img/units/artillery.svg" x="650" y="400" height="3%" width="3%"></image>
+				<image   id="G6-cavalry"   class="G6 armyUnit" xlink:href="./img/units/cavalry.svg"   x="680" y="400" height="3%" width="3%"></image>
+				<image   id="G6-infantry"  class="G6 armyUnit" xlink:href="./img/units/infantry.svg"  x="665" y="420" height="3%" width="3%"></image>
+				
+
+				
+				<polygon id="G7-county" class="G1 county" points="559.58,534.62 590.71,495.35 627.06,485.13 724.75,464.47 734.97,487.63 780.19,526.90 761.56,552.33 723.39,579.80 643.19,587.29 596.61,610.90 570.03,584.11 " 
+						 fill-opacity="10%"
+						 style="stroke:green;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="G7-artillery" class="G7 armyUnit" xlink:href="./img/units/artillery.svg" x="600" y="510" height="3%" width="3%"></image>
+				<image   id="G7-cavalry"   class="G7 armyUnit" xlink:href="./img/units/cavalry.svg"   x="630" y="510" height="3%" width="3%"></image>
+				<image   id="G7-infantry"  class="G7 armyUnit" xlink:href="./img/units/infantry.svg"  x="615" y="535" height="3%" width="3%"></image>
+				
+
+				
+				<polygon id="G8-county" class="G1 county" points="493.69,653.80 510.28,620.20 541.18,611.81 574.57,619.98 596.61,610.90 643.19,587.29 723.39,579.80 761.56,552.33 817.67,593.87 788.82,645.40 769.05,654.48 663.86,647.67 571.62,652.44 " 
+						 fill-opacity="10%"
+						 style="stroke:green;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="G8-artillery" class="G8 armyUnit" xlink:href="./img/units/artillery.svg" x="610" y="610" height="3%" width="3%"></image>
+				<image   id="G8-cavalry"   class="G8 armyUnit" xlink:href="./img/units/cavalry.svg"   x="640" y="605" height="3%" width="3%"></image>
+				<image   id="G8-infantry"  class="G8 armyUnit" xlink:href="./img/units/infantry.svg"  x="665" y="605" height="3%" width="3%"></image>
+				
+				
+				
+				<polygon id="G9-county" class="G9 county" points="724.75,464.47 739.74,438.59 751.33,399.09 795.86,382.97 792.68,449.26 830.17,496.94 857.20,531.44 817.67,593.87 761.56,552.33 780.19,526.90 734.97,487.63 " 
+						 fill-opacity="10%"
+						 style="stroke:green;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="G9-artillery" class="G9 armyUnit" xlink:href="./img/units/artillery.svg" x="780" y="510" height="3%" width="3%"></image>
+				<image   id="G9-cavalry"   class="G9 armyUnit" xlink:href="./img/units/cavalry.svg"   x="810" y="510" height="3%" width="3%"></image>
+				<image   id="G9-infantry"  class="G9 armyUnit" xlink:href="./img/units/infantry.svg"  x="790" y="540" height="3%" width="3%"></image>
+				
+
+				
+				<polygon id="G10-county" class="G10 county" points="795.86,382.97 852.21,379.11 878.11,341.43 893.56,332.35 943.77,357.32 957.85,390.69 932.63,429.74 880.61,479.00 857.20,531.44 830.17,496.94 792.68,449.26 " 
+						 fill-opacity="10%"
+						 style="stroke:green;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="G10-artillery" class="G10 armyUnit" xlink:href="./img/units/artillery.svg" x="850" y="380" height="3%" width="3%"></image>
+				<image   id="G10-cavalry"   class="G10 armyUnit" xlink:href="./img/units/cavalry.svg"   x="880" y="380" height="3%" width="3%"></image>
+				<image   id="G10-infantry"  class="G10 armyUnit" xlink:href="./img/units/infantry.svg"  x="865" y="405" height="3%" width="3%"></image>
+				
+				
+				
+				<polygon id="G11-county" class="G11 county" points="708.39,293.76 750.20,297.84 766.33,313.28 797.45,307.61 817.67,313.73 858.57,279.00 876.06,293.30 893.56,332.35 878.11,341.43 852.21,379.11 795.86,382.97 751.33,399.09 715.89,384.34 707.48,364.59 729.29,343.70 730.88,324.40 707.48,312.60 " 
+						 fill-opacity="10%"
+						 style="stroke:green;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="G11-artillery" class="G11 armyUnit" xlink:href="./img/units/artillery.svg" x="750" y="330" height="3%" width="3%"></image>
+				<image   id="G11-cavalry"   class="G11 armyUnit" xlink:href="./img/units/cavalry.svg"   x="780" y="330" height="3%" width="3%"></image>
+				<image   id="G11-infantry"  class="G11 armyUnit" xlink:href="./img/units/infantry.svg"  x="760" y="350" height="3%" width="3%"></image>
+					
+				
+				
+				<polygon id="R1-county" class="R1 county" points="713.62,796.14 773.60,779.57 823.35,764.36 838.57,794.55 748.61,849.94 727.25,838.37 731.79,816.12 " 
+						 fill-opacity="10%"
+						 style="stroke:red;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="R1-artillery" class="R1 armyUnit" xlink:href="./img/units/artillery.svg" x="730" y="795" height="3%" width="3%"></image>
+				<image   id="R1-cavalry"   class="R1 armyUnit" xlink:href="./img/units/cavalry.svg"   x="780" y="780" height="3%" width="3%"></image>
+				<image   id="R1-infantry"  class="R1 armyUnit" xlink:href="./img/units/infantry.svg"  x="755" y="790" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="R2-county" class="R2 county" points="663.86,647.67 769.05,654.48 788.82,645.40 825.62,686.95 823.35,764.36 773.60,779.57 730.43,744.84 651.82,726.67 " 
+						 fill-opacity="10%"
+						 style="stroke:red;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="R2-artillery" class="R2 armyUnit" xlink:href="./img/units/artillery.svg" x="740" y="705" height="3%" width="3%"></image>
+				<image   id="R2-cavalry"   class="R2 armyUnit" xlink:href="./img/units/cavalry.svg"   x="770" y="705" height="3%" width="3%"></image>
+				<image   id="R2-infantry"  class="R2 armyUnit" xlink:href="./img/units/infantry.svg"  x="755" y="735" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="R3-county" class="R3 county" points="493.24,702.16 569.35,667.20 571.62,652.44 663.86,647.67 651.82,726.67 595.93,749.38 566.62,787.29 494.37,777.98 " 
+						 fill-opacity="10%"
+						 style="stroke:red;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="R3-artillery" class="R3 armyUnit" xlink:href="./img/units/artillery.svg" x="530" y="690" height="3%" width="3%"></image>
+				<image   id="R3-cavalry"   class="R3 armyUnit" xlink:href="./img/units/cavalry.svg"   x="560" y="690" height="3%" width="3%"></image>
+				<image   id="R3-infantry"  class="R3 armyUnit" xlink:href="./img/units/infantry.svg"  x="545" y="720" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="R4-county" class="R4 county" points="566.62,787.29 595.93,749.38 651.82,726.67 730.43,744.84 773.60,779.57 713.62,796.14 731.79,816.12 727.25,838.37 655.68,825.65 596.16,822.25 " 
+						 fill-opacity="10%"
+						 style="stroke:red;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="R4-artillery" class="R4 armyUnit" xlink:href="./img/units/artillery.svg" x="620" y="740" height="3%" width="3%"></image>
+				<image   id="R4-cavalry"   class="R4 armyUnit" xlink:href="./img/units/cavalry.svg"   x="650" y="735" height="3%" width="3%"></image>
+				<image   id="R4-infantry"  class="R4 armyUnit" xlink:href="./img/units/infantry.svg"  x="635" y="760" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="R5-county" class="R5 county" points="476.20,862.43 517.09,847.90 566.62,787.29 596.16,822.25 561.40,849.94 544.13,951.42 507.10,944.38 493.47,925.77 480.74,884.22 " 
+						 fill-opacity="10%"
+						 style="stroke:red;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="R5-artillery" class="R5 armyUnit" xlink:href="./img/units/artillery.svg" x="490" y="855" height="3%" width="3%"></image>
+				<image   id="R5-cavalry"   class="R5 armyUnit" xlink:href="./img/units/cavalry.svg"   x="520" y="855" height="3%" width="3%"></image>
+				<image   id="R5-infantry"  class="R5 armyUnit" xlink:href="./img/units/infantry.svg"  x="505" y="885" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="R6-county" class="R6 county" points="371.24,821.79 436.44,784.34 494.37,777.98 566.62,787.29 517.09,847.90 476.20,862.43 437.80,842.23 388.96,842.68 378.28,835.41 " 
+						 fill-opacity="10%"
+						 style="stroke:red;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="R6-artillery" class="R6 armyUnit" xlink:href="./img/units/artillery.svg" x="440" y="805" height="3%" width="3%"></image>
+				<image   id="R6-cavalry"   class="R6 armyUnit" xlink:href="./img/units/cavalry.svg"   x="470" y="805" height="3%" width="3%"></image>
+				<image   id="R6-infantry"  class="R6 armyUnit" xlink:href="./img/units/infantry.svg"  x="455" y="830" height="3%" width="3%"></image>	
+				
+				
+				
+				
+				<polygon id="R7-county" class="R7 county" points="341.93,679.00 389.41,701.02 442.35,697.62 493.24,702.16 494.37,777.98 436.44,784.34 371.24,821.79 361.24,765.27 369.42,736.66 " 
+						 fill-opacity="10%"
+						 style="stroke:red;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="R7-artillery" class="R7 armyUnit" xlink:href="./img/units/artillery.svg" x="380" y="715" height="3%" width="3%"></image>
+				<image   id="R7-cavalry"   class="R7 armyUnit" xlink:href="./img/units/cavalry.svg"   x="440" y="710" height="3%" width="3%"></image>
+				<image   id="R7-infantry"  class="R7 armyUnit" xlink:href="./img/units/infantry.svg"  x="390" y="750" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="R8-county" class="R8 county" points="263.55,724.40 315.57,704.65 341.93,679.00 369.42,736.66 361.24,765.27 371.24,821.79 356.01,801.36 319.66,792.51 297.85,780.93 293.31,746.65 " 
+						 fill-opacity="10%"
+						 style="stroke:red;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="R8-artillery" class="R8 armyUnit" xlink:href="./img/units/artillery.svg" x="295" y="715" height="3%" width="3%"></image>
+				<image   id="R8-cavalry"   class="R8 armyUnit" xlink:href="./img/units/cavalry.svg"   x="325" y="715" height="3%" width="3%"></image>
+				<image   id="R8-infantry"  class="R8 armyUnit" xlink:href="./img/units/infantry.svg"  x="310" y="740" height="3%" width="3%"></image>	
+					
+
+				<polygon id="R9-county" class="R9 county" points="341.93,679.00 401.23,678.09 415.99,651.99 446.44,658.57 493.69,653.80 571.62,652.44 569.35,667.20 493.24,702.16 442.35,697.62 389.41,701.02 " 
+						 fill-opacity="10%"
+						 style="stroke:red;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="R9-artillery" class="R9 armyUnit" xlink:href="./img/units/artillery.svg" x="415" y="665" height="3%" width="3%"></image>
+				<image   id="R9-cavalry"   class="R9 armyUnit" xlink:href="./img/units/cavalry.svg"   x="455" y="665" height="3%" width="3%"></image>
+				<image   id="R9-infantry"  class="R9 armyUnit" xlink:href="./img/units/infantry.svg"  x="435" y="665" height="3%" width="3%"></image>	
+					
+
+			 
+				<polygon id="O1-county" class="O1 county" points="857.20,531.44 880.61,479.00 932.63,429.74 957.85,390.69 976.25,525.99 971.71,572.53 " 
+						 fill-opacity="10%"
+						 style="stroke:orange;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="O1-artillery" class="O1 armyUnit" xlink:href="./img/units/artillery.svg" x="890" y="475" height="3%" width="3%"></image>
+				<image   id="O1-cavalry"   class="O1 armyUnit" xlink:href="./img/units/cavalry.svg"   x="920" y="475" height="3%" width="3%"></image>
+				<image   id="O1-infantry"  class="O1 armyUnit" xlink:href="./img/units/infantry.svg"  x="905" y="505" height="3%" width="3%"></image>
+				
+				
+				<polygon id="O2-county" class="O2 county" points="957.85,390.69 1008.52,424.74 1067.36,431.10 1054.18,516.00 1040.10,524.40 1042.82,552.55 1073.49,599.09 971.71,572.53 976.25,525.99 " 
+						 fill-opacity="10%"
+						 style="stroke:orange;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="O2-artillery" class="O2 armyUnit" xlink:href="./img/units/artillery.svg" x="970" y="440" height="3%" width="3%"></image>
+				<image   id="O2-cavalry"   class="O2 armyUnit" xlink:href="./img/units/cavalry.svg"   x="970" y="470" height="3%" width="3%"></image>
+				<image   id="O2-infantry"  class="O2 armyUnit" xlink:href="./img/units/infantry.svg"  x="970" y="505" height="3%" width="3%"></image>
+				
+
+				<polygon id="O3-county" class="O3 county" points="1067.36,431.10 1093.26,444.95 1118.70,492.17 1117.80,536.89 1139.83,555.05 1180.05,595.46 1162.55,596.82 1130.29,607.04 1073.49,599.09 1042.82,552.55 1040.10,524.40 1054.18,516.00 " 
+						 fill-opacity="10%"
+						 style="stroke:orange;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="O3-artillery" class="O3 armyUnit" xlink:href="./img/units/artillery.svg" x="1045" y="520" height="3%" width="3%"></image>
+				<image   id="O3-cavalry"   class="O3 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1075" y="520" height="3%" width="3%"></image>
+				<image   id="O3-infantry"  class="O3 armyUnit" xlink:href="./img/units/infantry.svg"  x="1060" y="550" height="3%" width="3%"></image>
+
+				
+				<polygon id="O4-county" class="O4 county" points="1073.49,599.09 1130.29,607.04 1162.55,596.82 1180.05,595.46 1147.33,652.67 1151.42,730.99 1137.11,778.66 1091.21,803.63 1078.95,760.95 1070.54,714.42 1106.44,733.26 1117.57,725.77 1099.39,660.84 1069.86,630.42 " 
+						 fill-opacity="10%"
+						 style="stroke:orange;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="O4-artillery" class="O4 armyUnit" xlink:href="./img/units/artillery.svg" x="1080" y="615" height="3%" width="3%"></image>
+				<image   id="O4-cavalry"   class="O4 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1110" y="615" height="3%" width="3%"></image>
+				<image   id="O4-infantry"  class="O4 armyUnit" xlink:href="./img/units/infantry.svg"  x="1095" y="645" height="3%" width="3%"></image>
+
+				
+				<polygon id="O5-county" class="O5 county" points="971.71,572.53 1073.49,599.09 1069.86,630.42 1099.39,660.84 1117.57,725.77 1106.44,733.26 1070.54,714.42 1037.37,725.09 1004.20,708.06 1000.56,673.55 961.49,621.57 977.16,585.24 " 
+						 fill-opacity="10%"
+						 style="stroke:orange;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="O5-artillery" class="O5 armyUnit" xlink:href="./img/units/artillery.svg" x="980" y="600" height="3%" width="3%"></image>
+				<image   id="O5-cavalry"   class="O5 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1010" y="610" height="3%" width="3%"></image>
+				<image   id="O5-infantry"  class="O5 armyUnit" xlink:href="./img/units/infantry.svg"  x="990" y="635" height="3%" width="3%"></image>
+				
+				
+				<polygon id="O6-county" class="O6 county" points="857.20,531.44 971.71,572.53 977.16,585.24 961.49,621.57 923.09,604.99 858.11,612.49 817.67,593.87 " 
+						 fill-opacity="10%"
+						 style="stroke:orange;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="O6-artillery" class="O6 armyUnit" xlink:href="./img/units/artillery.svg" x="845" y="555" height="3%" width="3%"></image>
+				<image   id="O6-cavalry"   class="O6 armyUnit" xlink:href="./img/units/cavalry.svg"   x="885" y="560" height="3%" width="3%"></image>
+				<image   id="O6-infantry"  class="O6 armyUnit" xlink:href="./img/units/infantry.svg"  x="860" y="575" height="3%" width="3%"></image>
+
+				
+				<polygon id="O7-county" class="O7 county" points="858.11,612.49 923.09,604.99 961.49,621.57 1000.56,673.55 1004.20,708.06 1022.60,737.12 1024.42,808.63 974.89,797.96 914.00,784.34 867.20,724.18 860.38,669.92 " 
+						 fill-opacity="10%"
+						 style="stroke:orange;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="O7-artillery" class="O7 armyUnit" xlink:href="./img/units/artillery.svg" x="870" y="620" height="3%" width="3%"></image>
+				<image   id="O7-cavalry"   class="O7 armyUnit" xlink:href="./img/units/cavalry.svg"   x="900" y="620" height="3%" width="3%"></image>
+				<image   id="O7-infantry"  class="O7 armyUnit" xlink:href="./img/units/infantry.svg"  x="880" y="645" height="3%" width="3%"></image>
+				
+				
+				
+				<polygon id="O8-county" class="O8 county" points="817.67,593.87 858.11,612.49 860.38,669.92 867.20,724.18 914.00,784.34 896.05,837.23 773.60,861.29 748.61,849.94 838.57,794.55 823.35,764.36 825.62,686.95 788.82,645.40 " 
+						 fill-opacity="10%"
+						 style="stroke:orange;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="O8-artillery" class="O8 armyUnit" xlink:href="./img/units/artillery.svg" x="815" y="625" height="3%" width="3%"></image>
+				<image   id="O8-cavalry"   class="O8 armyUnit" xlink:href="./img/units/cavalry.svg"   x="850" y="780" height="3%" width="3%"></image>
+				<image   id="O8-infantry"  class="O8 armyUnit" xlink:href="./img/units/infantry.svg"  x="825" y="695" height="3%" width="3%"></image>
+				
+				
+
+				<polygon id="O9-county" class="O9 county" points="773.60,861.29 896.05,837.23 914.00,784.34 974.89,797.96 981.25,830.19 965.80,880.14 931.27,918.05 886.06,930.31 843.35,879.23 " 
+						 fill-opacity="10%"
+						 style="stroke:orange;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="O9-artillery" class="O9 armyUnit" xlink:href="./img/units/artillery.svg" x="870" y="850" height="3%" width="3%"></image>
+				<image   id="O9-cavalry"   class="O9 armyUnit" xlink:href="./img/units/cavalry.svg"   x="900" y="850" height="3%" width="3%"></image>
+				<image   id="O9-infantry"  class="O9 armyUnit" xlink:href="./img/units/infantry.svg"  x="880" y="870" height="3%" width="3%"></image>
+
+				
+				<polygon id="O10-county" class="O10 county" points="1004.20,708.06 1037.37,725.09 1070.54,714.42 1078.95,760.95 1091.21,803.63 1032.83,869.47 965.80,880.14 981.25,830.19 974.89,797.96 1024.42,808.63 1022.60,737.12 " 
+						 fill-opacity="10%"
+						 style="stroke:orange;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="O10-artillery" class="O10 armyUnit" xlink:href="./img/units/artillery.svg" x="995" y="820" height="3%" width="3%"></image>
+				<image   id="O10-cavalry"   class="O10 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1030" y="740" height="3%" width="3%"></image>
+				<image   id="O10-infantry"  class="O10 armyUnit" xlink:href="./img/units/infantry.svg"  x="1030" y="785" height="3%" width="3%"></image>
+					
+				
+				<polygon id="B1-county" class="B1 county" points="839.71,108.51 871.06,130.76 887.88,158.46 879.01,188.65 901.05,209.53 905.60,239.95 912.19,257.43 886.06,266.29 876.06,293.30 858.57,279.00 833.58,226.33 809.72,216.35 802.22,149.15 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B1-artillery" class="B1 armyUnit" xlink:href="./img/units/artillery.svg" x="820" y="150" height="3%" width="3%"></image>
+				<image   id="B1-cavalry"   class="B1 armyUnit" xlink:href="./img/units/cavalry.svg"   x="855" y="220" height="3%" width="3%"></image>
+				<image   id="B1-infantry"  class="B1 armyUnit" xlink:href="./img/units/infantry.svg"  x="835" y="185" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="B2-county" class="B2 county" points="850.16,46.77 887.42,15.66 918.77,47.67 949.67,56.30 965.35,111.46 1007.61,130.08 1015.10,170.03 983.98,175.26 945.58,148.92 916.27,143.93 887.88,158.46 871.06,130.76 839.71,108.51 859.02,82.41 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B2-artillery" class="B2 armyUnit" xlink:href="./img/units/artillery.svg" x="865" y="70" height="3%" width="3%"></image>
+				<image   id="B2-cavalry"   class="B2 armyUnit" xlink:href="./img/units/cavalry.svg"   x="895" y="70" height="3%" width="3%"></image>
+				<image   id="B2-infantry"  class="B2 armyUnit" xlink:href="./img/units/infantry.svg"  x="880" y="100" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="B3-county" class="B3 county" points="887.88,158.46 916.27,143.93 945.58,148.92 983.98,175.26 1015.10,170.03 1051.46,176.84 1077.36,210.22 1050.55,227.01 1025.78,271.51 1000.34,280.59 977.62,305.56 927.86,295.35 912.19,257.43 905.60,239.95 901.05,209.53 879.01,188.65 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B3-artillery" class="B3 armyUnit" xlink:href="./img/units/artillery.svg" x="910" y="170" height="3%" width="3%"></image>
+				<image   id="B3-cavalry"   class="B3 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1000" y="190" height="3%" width="3%"></image>
+				<image   id="B3-infantry"  class="B3 armyUnit" xlink:href="./img/units/infantry.svg"  x="950" y="250" height="3%" width="3%"></image>	
+				
+
+				<polygon id="B4-county" class="B4 county" points="876.06,293.30 886.06,266.29 912.19,257.43 927.86,295.35 977.62,305.56 943.77,357.32 893.56,332.35 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B4-artillery" class="B4 armyUnit" xlink:href="./img/units/artillery.svg" x="880" y="275" height="3%" width="3%"></image>
+				<image   id="B4-cavalry"   class="B4 armyUnit" xlink:href="./img/units/cavalry.svg"   x="920" y="305" height="3%" width="3%"></image>
+				<image   id="B4-infantry"  class="B4 armyUnit" xlink:href="./img/units/infantry.svg"  x="895" y="300" height="3%" width="3%"></image>	
+				
+
+				<polygon id="B5-county" class="B5 county" points="977.62,305.56 1000.34,280.59 1053.95,301.93 1100.98,295.80 1087.81,326.45 1095.30,356.64 1067.36,431.10 1008.52,424.74 957.85,390.69 943.77,357.32 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B5-artillery" class="B5 armyUnit" xlink:href="./img/units/artillery.svg" x="975" y="320" height="3%" width="3%"></image>
+				<image   id="B5-cavalry"   class="B5 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1005" y="320" height="3%" width="3%"></image>
+				<image   id="B5-infantry"  class="B5 armyUnit" xlink:href="./img/units/infantry.svg"  x="990" y="350" height="3%" width="3%"></image>	
+
+						
+				<polygon id="B6-county" class="B6 county" points="1077.36,210.22 1094.62,217.93 1124.61,198.87 1171.64,229.06 1132.79,266.06 1100.98,295.80 1053.95,301.93 1000.34,280.59 1025.78,271.51 1050.55,227.01 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B6-artillery" class="B6 armyUnit" xlink:href="./img/units/artillery.svg" x="1050" y="230" height="3%" width="3%"></image>
+				<image   id="B6-cavalry"   class="B6 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1080" y="230" height="3%" width="3%"></image>
+				<image   id="B6-infantry"  class="B6 armyUnit" xlink:href="./img/units/infantry.svg"  x="1065" y="260" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="B7-county" class="B7 county" points="1007.61,130.08 1066.45,118.96 1118.48,128.26 1114.39,164.81 1124.61,198.87 1094.62,217.93 1077.36,210.22 1051.46,176.84 1015.10,170.03 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B7-artillery" class="B7 armyUnit" xlink:href="./img/units/artillery.svg" x="1040" y="135" height="3%" width="3%"></image>
+				<image   id="B7-cavalry"   class="B7 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1070" y="135" height="3%" width="3%"></image>
+				<image   id="B7-infantry"  class="B7 armyUnit" xlink:href="./img/units/infantry.svg"  x="1055" y="160" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="B8-county" class="B8 county" points="1118.48,128.26 1170.73,123.27 1209.13,160.05 1236.39,190.01 1253.43,207.26 1220.03,223.38 1171.64,229.06 1124.61,198.87 1114.39,164.81 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B8-artillery" class="B8 armyUnit" xlink:href="./img/units/artillery.svg" x="1125" y="145" height="3%" width="3%"></image>
+				<image   id="B8-cavalry"   class="B8 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1155" y="145" height="3%" width="3%"></image>
+				<image   id="B8-infantry"  class="B8 armyUnit" xlink:href="./img/units/infantry.svg"  x="1140" y="175" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="B9-county" class="B9 county" points="1171.64,229.06 1220.03,223.38 1253.43,207.26 1263.65,255.39 1256.61,288.99 1277.29,312.15 1241.62,356.41 1235.26,381.16 1205.27,392.96 1157.33,361.41 1139.15,371.40 1095.30,356.64 1087.81,326.45 1100.98,295.80 1132.79,266.06 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B9-artillery" class="B9 armyUnit" xlink:href="./img/units/artillery.svg" x="1140" y="290" height="3%" width="3%"></image>
+				<image   id="B9-cavalry"   class="B9 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1170" y="290" height="3%" width="3%"></image>
+				<image   id="B9-infantry"  class="B9 armyUnit" xlink:href="./img/units/infantry.svg"  x="1155" y="320" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="B10-county" class="B10 county" points="1095.30,356.64 1139.15,371.40 1157.33,361.41 1205.27,392.96 1212.54,433.14 1184.36,447.90 1158.24,520.77 1139.83,555.05 1117.80,536.89 1118.70,492.17 1093.26,444.95 1067.36,431.10 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B10-artillery" class="B10 armyUnit" xlink:href="./img/units/artillery.svg" x="1090" y="380" height="3%" width="3%"></image>
+				<image   id="B10-cavalry"   class="B10 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1150" y="380" height="3%" width="3%"></image>
+				<image   id="B10-infantry"  class="B10 armyUnit" xlink:href="./img/units/infantry.svg"  x="1120" y="450" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="B11-county" class="B11 county" points="1205.27,392.96 1235.26,381.16 1241.62,356.41 1277.29,312.15 1312.50,364.36 1298.19,408.40 1274.79,406.13 1273.65,448.58 1260.02,484.90 1227.30,460.61 1212.54,433.14 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B11-artillery" class="B11 armyUnit" xlink:href="./img/units/artillery.svg" x="1245" y="360" height="3%" width="3%"></image>
+				<image   id="B11-cavalry"   class="B11 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1220" y="390" height="3%" width="3%"></image>
+				<image   id="B11-infantry"  class="B11 armyUnit" xlink:href="./img/units/infantry.svg"  x="1230" y="430" height="3%" width="3%"></image>	
+				
+				
+				<polygon id="B12-county" class="B12 county" points="1139.83,555.05 1158.24,520.77 1184.36,447.90 1212.54,433.14 1227.30,460.61 1260.02,484.90 1241.16,523.04 1228.67,523.04 1180.05,595.46 " 
+						 fill-opacity="10%"
+						 style="stroke:black;stroke-width:2;fill-rule:nonzero;" />
+				<image   id="B12-artillery" class="B12 armyUnit" xlink:href="./img/units/artillery.svg" x="1170" y="475" height="3%" width="3%"></image>
+				<image   id="B12-cavalry"   class="B12 armyUnit" xlink:href="./img/units/cavalry.svg"   x="1200" y="475" height="3%" width="3%"></image>
+				<image   id="B12-infantry"  class="B12 armyUnit" xlink:href="./img/units/infantry.svg"  x="1185" y="500" height="3%" width="3%"></image>	
+
+			  </svg>
+			</div>
+			<div id="log-container">
+				<div><button id="configButton" type="button" onclick="changeConfig()">Change Config</button></div>
+				<div id="hoverLog"> here be hover log </div>
+				<div><button type="button" onclick="undoLastMove()">Undo Last Move</button></div>			
+			</div>
+		</div>
+
+		<div id="menuContainer"> 
+			<div id="selectedCounty" >
+				<div id="selCountyName" class="menuLabel">Current County - Not Selected </div>
+				<div id="selCountyUnitsList">
+					<table>
+					  <thead>
+						  <tr>
+							<th>⚔</th><th>❤️</th><th>🦿</th><th>💢</th><th>🡾</th>
+						  </tr>					  
+					  </thead>
+					  <tbody id="selCountyUnitsTable">
+					  <!-- contents added/removed dynamically -->
+					  </tbody>
+					</table>
+				</div>
+				<div id="selCountyByttons" class="menuButtons" >
+					<button type="button" onclick="updateCommandList()">Add to List</button>
+					<button type="button" onclick="renderSelectedCounty()">Clear Selection</button>
+				</div>
+			</div>
+			<div id="commandList" class="menuItem">
+				<div id="commandListLabel" class="menuLabel">Command List </div>
+				<div id="commandUnitsList">
+					<table>
+					  <thead>
+						  <tr>
+							<th>🡽</th>
+							<th>⚔</th>
+							<th>💢</th>
+							<th>🡾</th>
+						  </tr>					  
+					  </thead>
+					  <tbody id="commandListUnitsTable">
+					  <!-- contents added/removed dynamically -->
+					  </tbody>
+					</table>
+				</div>
+				<div id="commandListByttons" class="menuButtons" >
+					<button type="button" onclick="commenceListCommands()">Commence</button>
+					<button type="button" onclick="clearCommandList()">Clear List</button>
+				</div>
+			</div>
+			<div id="startButtonCointainer">
+				<button type="button" id="startGameButton" onclick="startTheGame()">Start the Game</button>
+			</div>
+		</div>
+
+	</body>
+	<script type="text/javascript" src="./js/elements.js"></script>
+	<script type="text/javascript" src="./js/config.js"></script>
+	<script type="text/javascript" src="./js/backup.js"></script>
+	<script type="text/javascript" src="./js/classes.js"></script>
+	<script type="text/javascript" src="./js/map-lib.js"></script>
+	<script type="text/javascript" src="./js/action-checks.js"></script>
+	<script type="text/javascript" src="./js/game-functions.js"></script>
+	<script type="text/javascript" src="./js/command-list-functions.js"></script>
+	<script type="text/javascript" src="./js/battle-functions.js"></script>
+	<script type="text/javascript" src="./js/render.js"></script>
+	<script type="text/javascript" src="./js/svg-script.js"></script>
+	<script type="text/javascript" src="./js/test/test-functions.js"></script>
+</html>

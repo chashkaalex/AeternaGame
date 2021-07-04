@@ -1,0 +1,70 @@
+body {
+    /* background-color: blueviolet; */
+    
+    width: 97vw;
+    height: 97vh;
+}
+
+#header {
+    height: 5vh;
+    width: 75%;
+    text-align: center;
+    display: flex;    
+    background-color: burlywood;
+    border-bottom: 3px solid blueviolet;
+    
+}
+
+#logContainer {
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    border: 1px solid black;
+    display: flex;
+}
+
+#gameLogLabel {
+    width: 30%;
+    height: 100%;
+    margin: 0px;
+    /* padding-left: 5px; */
+    background-color: chocolate;
+    border: 1px double black;
+}
+
+#gameLog {
+    width: 90%;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding-top: 2px;
+    padding-left: 5px;
+    height: 90%;
+    overflow-y: scroll;
+    background-color: lightgrey;
+    z-index: 9999999;
+}
+
+#mainField {
+    height: 90vh;
+    width: 75%;
+    color: blue;
+    border: 2px solid black;  
+    /* background-image: url(img/map_cut.jpg);  */
+    /* background-size: contain;                     */
+    background-size: 100% 100% ;                    
+    background-repeat: no-repeat;
+    background-position: center center;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-row {
+    height: 25%;
+    border: 1px solid blue;
+    display: flex;
+    flex-direction: row;
+}
+
+area {
+    outline-color: white;
+  }
