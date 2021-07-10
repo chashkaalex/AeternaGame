@@ -36,6 +36,8 @@ const commenceAttack = () => {
 	
 	const winner  = attackDamage > defenceDamage ? 'attacker' : 'defender';
 	console.log(`${winner} won!`);
+	gameState.gameLog.push( `${gameState.movingPlayer} is attacking ${defendedCounty.name}`);
+	gameState.gameLog.push( `Attack damage is ${attackDamage},  defence damage is ${defenceDamage}, ${winner} has won.`);
 	
 	inflictDamage(attackDamage, defenceDamage);
 
@@ -50,6 +52,7 @@ const commenceAttack = () => {
 		const panic = attackDamage > defenceDamage * 2;
 		fleeDefenders(panic);
 	}
+	showLog();
 	emptyCommandList(winner);
 	renderAll();
 };
@@ -139,7 +142,7 @@ const inflictDamage = (attackDamage, defenceDamage) => {
 const buryTheDead = () => {
 	const theMap = gameState.theMap;
 	const defendedCounty = theMap[gameState.commandList[0].destination];
-	const defendingArmy = defendedCounty.army;
+	//const defendingArmy = defendedCounty.army;
 
 	//bury dead attackers
 	gameState.commandList.forEach((directive) => {

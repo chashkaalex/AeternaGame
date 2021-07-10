@@ -8,6 +8,9 @@ const startTheGame = () => {
 	startGameButton.onclick = endMove;
 	configButton.innerHTML = 'Load Saved Game';
 	configButton.onclick = loadSavedGame;
+	//update the log 
+	gameState.gameLog.push(`Starting the game. ${gameState.movingPlayer}'s move`);
+	showLog()
 };
 
 const endMove = () => {
@@ -29,6 +32,8 @@ const endMove = () => {
 		gameState.selectedCounty = '';
 		refreshEventsAndClasses();
 		renderAll();
+		gameState.gameLog.push(`Move ended. ${gameState.movingPlayer}'s move`);
+		showLog()
 	}
 };
 
@@ -42,13 +47,23 @@ const hoverOverCounty = (event) => {
 		}
 	}
 	//console.log(hoverString);
-	hoverLogElem.innerHTML = hoverString;
+	hoverLogElem.textContent = hoverString;
+	hoverLogElem.style.fontSize = "small";
 };
 
 //establishing the event for all county elements
 countyElems.forEach((countyElem) => {
 	//console.log('Creating hover event for ', countyElem.id);
 	countyElem.addEventListener("mouseover", hoverOverCounty);
+});
+
+const showLog = (event) => {
+	hoverLogElem.textContent = gameState.gameLog.length ? gameState.gameLog[gameState.gameLog.length-1] : "Game log";
+}
+
+//showing the log back when not hovering over the county element
+countyElems.forEach((countyElem) => {
+	countyElem.addEventListener("mouseout", showLog);
 });
 
 

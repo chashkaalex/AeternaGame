@@ -12,7 +12,7 @@ const updateCommandList = () => {
 		window.alert("You cannot add both 'Move' and 'Attack/Support' directives to the Command list.");
 		return;
 	}
-	
+
 	[...selCountyTable.rows].forEach((row)=> {
 		const selAction = cellElemSelectedOption(row.cells[3], 'text');
 		if(selAction !== actionTypes.none) {
@@ -51,16 +51,33 @@ const cellElemSelectedOption = (elem, option) => {
 
 const commenceListCommands = () => {
     console.log('running clc');
-	// sending current state to the stack
-	// gameMovesStack.push(JSON.parse(JSON.stringify(gameState)));
+	// sending current state to the stack and updating the moves backup
 	pushStateToGameMoveStack(gameState);
 	updateLocalBackUp();
-    //console.log(gameState.commandList);
-	//debugger;
+
     if(gameState.commandList[0].action === actionTypes.move) {
+	//creating directives hash map for the log
+		const movesHash = {};		
         while(gameState.commandList.length) {
-            commenceUnitMove(gameState.commandList.pop());
+			const theDirective = gameState.commandList.pop();
+			//hashing the directives for the log
+			const moveString = `${theDirective.source}-${theDirective.unit.split('-')[1]}-${theDirective.destination}`;
+			if(movesHash[moveString]) {
+				movesHash[moveString]++;
+			} else {
+				movesHash[moveString] = 1;
+			}
+            commenceUnitMove(theDirective);
         }
+		for (let theLog in movesHash) {
+			const [source, unitType, destination] = theLog.split('-');
+			gameState.gameLog.push(
+				`Moving ${movesHash[theLog]} ${unitType} units 
+				from ${countiesList[source].name}(${source}) 
+				to ${countiesList[destination].name}(${destination})`
+			);
+		}
+		showLog();
     } else if(gameState.commandList[0].action === actionTypes.attack) {
 		commenceAttack();
 	}

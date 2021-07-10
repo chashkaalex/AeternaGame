@@ -6,7 +6,7 @@ class County {
 		this.neighbors = neighbors;
 		this.hasCastle = hasCastle;
 	}
-	army = {artillery: [], cavalry: [], infantry: []};
+	army = {cavalry: [], infantry: [], artillery: []};
 	
 	totalUnits() {
 		return this.army.artillery.length + this.army.cavalry.length + this.army.infantry.length;

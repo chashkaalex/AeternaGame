@@ -135,7 +135,8 @@ const gameState = {
 	theMap: {},
 	selectedCounty: '',
 	commandList: [],
-	movingPlayer: sides.red
+	movingPlayer: sides.red,
+	gameLog: []
 };
 
 

@@ -91,7 +91,15 @@
 					<button type="button" onclick="hideBackupModal()">Cancel</button>					
 				</div>
 			  </div>
-			</div>						
+			</div>		
+			<div id="gameLogModal" class="modal">				
+				<div class="modal-content">
+					<span class="closeModal" id="closeGameLogModal" onclick="hideGameLogModal()">&times;</span>
+					<p>Game Log</p>
+					<!-- contents added/removed dynamically -->
+					<div id="fullLogContainer">Full game log container</div>
+				</div>
+			</div>				
 			
 			<div id="mainField">
 			  <svg version="1.1" 
@@ -546,8 +554,12 @@
 			  </svg>
 			</div>
 			<div id="log-container">
-				<div><button id="configButton" type="button" onclick="changeConfig()">Change Config</button></div>
-				<div id="hoverLog"> here be hover log </div>
+				<div>
+					<button id="configButton" type="button" onclick="changeConfig()">Change Config</button>
+					<button type="button" id="startGameButton" onclick="startTheGame()">Start the Game</button>
+				</div>
+				<div id="hoverLog"><small> Game Log </small></div>
+				<div><button type="button" onclick="expandLog()">▲ Show Log</button></div>			
 				<div><button type="button" onclick="undoLastMove()">Undo Last Move</button></div>			
 			</div>
 		</div>
@@ -592,10 +604,10 @@
 				<div id="commandListByttons" class="menuButtons" >
 					<button type="button" onclick="commenceListCommands()">Commence</button>
 					<button type="button" onclick="clearCommandList()">Clear List</button>
+					<!-- <div id="startButtonCointainer">
+						<button type="button" id="startGameButton" onclick="startTheGame()">Start the Game</button>
+					</div> -->
 				</div>
-			</div>
-			<div id="startButtonCointainer">
-				<button type="button" id="startGameButton" onclick="startTheGame()">Start the Game</button>
 			</div>
 		</div>
 

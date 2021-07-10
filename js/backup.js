@@ -93,7 +93,6 @@ const updateLocalBackUp = () => {
 	);
 };
 
-
 const loadSelectedBackup = () => {
 	const selected = [...backupContainerELem.children]
 		.filter(elem => elem.tagName === 'INPUT')
@@ -118,4 +117,19 @@ const loadSelectedBackup = () => {
 		undoLastMove();
 		clearCommandList();
 		backupModalElem.style.display = "none";
-}
+};
+
+const expandLog = () => {
+	gameLogModalElem.style.display = "block";
+	fullLogContainerElem.innerHTML = "";
+	gameState.gameLog.forEach(log => {
+		const newLogLine = document.createElement('div');
+		newLogLine.innerHTML = log;
+		fullLogContainerElem.appendChild(newLogLine)
+	})
+
+};
+
+const hideGameLogModal = () => {
+	gameLogModalElem.style.display = "none";
+};
